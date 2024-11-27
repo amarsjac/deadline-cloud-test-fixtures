@@ -4,6 +4,8 @@ from __future__ import annotations
 import botocore
 import botocore.client
 import botocore.loaders
+import botocore.config
+from botocore.config import Config
 import boto3
 import glob
 import json
@@ -591,7 +593,9 @@ def worker(
         ec2_client = boto3.client("ec2")
         s3_client = boto3.client("s3")
         ssm_client = boto3.client("ssm")
-        deadline_client = boto3.client("deadline")
+
+        config = Config(retries={"max_attempts": 10, "mode": "standard"})
+        deadline_client = boto3.client("deadline", config=config)
 
         worker = ec2_worker_type(
             ec2_client=ec2_client,
